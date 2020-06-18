@@ -46,7 +46,7 @@ end
     %también suponen mayor coste las puertas que las conexiones. Tenemos
     %que ajustar estos pesos hasta obtener nuestro óptimo.
     
-fitness=(sum(abs(OC-OA)))^2+0.0001*(3*P+length(find(A)))^2;
+fitness=(sum(abs(OC-OA)))+0.0001*(3*P+length(find(A)));
 
 %ESTABA: fit=1*(sum(abs(OC-OA)))^2 + 0.00001*(1-sum(abs(OC-OA)))*(4*P+ length(find(A)))^2;
 % fit=1000*(sum(abs(S-V)))^2; 

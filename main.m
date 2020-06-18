@@ -5,7 +5,7 @@ ff='test_function';
 % Creación población inicial (todos los individuos con el mismo número de
 % puertas)
 
-popsize=10;
+popsize=300;
 mutrate=0.2; %si se supera, entonces llamo a la funcion mutarL
 % - No reemplazamos a todos los individuos, sólo al 60% mejores:
 selection = 0.7; % fraction of population kept
@@ -30,7 +30,7 @@ mejor_fitness=sort(vector_fitnesses);
 min_fitness(1)=mejor_fitness(1);
 mean_fitness(1)=sum(vector_fitnesses)/length(vector_fitnesses);
 
-iteraciones=200;
+iteraciones=100;
 for k=1:iteraciones
     disp(k)
     poblacion_seleccionada=seleccionarL(poblacion,keep);
@@ -47,8 +47,12 @@ for k=1:iteraciones
         P1=parents{randi(num_parents)};
         P2=parents{randi(num_parents)};
         if length(P1(:,1))==length(P2(:,1)) && length(P1(1,:))==length(P2(1,:)) %tienen la misma dimensión
-            if P1==P2 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%WHILE
-                P2=parents{randi(num_parents)};
+            while 1
+                if P1==P2 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%WHILE
+                    P2=parents{randi(num_parents)};
+                    break
+                else
+                    continue
             end
         end
         hijos{i}=recombinar2(P1,P2);
@@ -94,7 +98,7 @@ end
 for i=1:length(poblacion)
     individuo=poblacion{j};
     fitness=test_function(individuo);
-    if min_fitness==fitness
+    if min_fitness(k+1)==fitness
         optimo=poblacion{i}
     end
 end
