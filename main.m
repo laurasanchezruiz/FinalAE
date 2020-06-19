@@ -5,7 +5,7 @@ ff='test_function';
 % Creación población inicial (todos los individuos con el mismo número de
 % puertas)
 
-popsize=300;
+popsize=10;
 mutrate=0.2; %si se supera, entonces llamo a la funcion mutarL
 % - No reemplazamos a todos los individuos, sólo al 60% mejores:
 selection = 0.7; % fraction of population kept
@@ -30,7 +30,7 @@ mejor_fitness=sort(vector_fitnesses);
 min_fitness(1)=mejor_fitness(1);
 mean_fitness(1)=sum(vector_fitnesses)/length(vector_fitnesses);
 
-iteraciones=100;
+iteraciones=1;
 for k=1:iteraciones
     disp(k)
     poblacion_seleccionada=seleccionarL(poblacion,keep);
@@ -43,16 +43,60 @@ for k=1:iteraciones
     hijos={};
     parents=poblacion_seleccionada;
     num_parents=length(parents);
+    
+    P1=parents{randi(num_parents)};
+    P2=parents{randi(num_parents)};
+    if length(P1(:,1))==length(P2(:,1)) && length(P1(1,:))==length(P2(1,:)) %tienen la misma dimensión
+        while 1
+            if P1==P2
+                P2=parents{randi(num_parents)};
+                break
+            else
+                continue
+            end
+        end
+    else
+        padres_usados{1}=P1;
+        padres_usados{2}=P2;
+    end
+    
+    padres_usados={};
     for i=1:(popsize-num_parents)
         P1=parents{randi(num_parents)};
         P2=parents{randi(num_parents)};
         if length(P1(:,1))==length(P2(:,1)) && length(P1(1,:))==length(P2(1,:)) %tienen la misma dimensión
             while 1
-                if P1==P2 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%WHILE
+                if P1==P2
                     P2=parents{randi(num_parents)};
+                    continue
+                else
+                    break
+                end
+            end
+        else
+            padres_usados{i+2}=P1;
+            padres_usados{i+3}=P2;
+        end
+        if i>=floor(num_parents/2)
+            while 1
+                if i>floor(num_parents/2) %se han acabado los padres
+                    for j=1:length(padres_usados)
+                        if P1==padres_usados{j}
+                            P1=parents(randi(num_parents));
+                            continue
+                        elseif P2==padres_usados{j}
+                            P2=parents(randi(num_parents));
+                            continue
+                        else
+                            break
+                        end
+                    end
+                elseif i==floor(num_parents/2)
+                    padres_usados={};
                     break
                 else
                     continue
+                end
             end
         end
         hijos{i}=recombinar2(P1,P2);
@@ -69,15 +113,17 @@ for k=1:iteraciones
             hijos_mut{i}=hijo;
         end
     end
-
+    
+    
+    
     % Agrupar en población a padres e hijos
     poblacion={};
     for i=1:length(parents)
         poblacion{i}=parents{i};
     end
     for i=length(parents)+1:popsize
-        for j=1:length(hijos)
-            poblacion{i}=hijos{j};
+        for j=1:length(hijos_mut)
+            poblacion{i}=hijos_mut{j};
     end
     end
     
